@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ValidateService} from '../../services/validate.service';
+import { AuthService } from '../../services/auth.service';
 
 import { FlashMessagesService } from 'angular2-flash-messages';
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-register',
@@ -15,7 +17,9 @@ export class RegisterComponent implements OnInit {
   password : String;
 
   constructor(private validateService : ValidateService,
-              private flashMessagesService : FlashMessagesService) { }
+              private flashMessagesService : FlashMessagesService,
+              private authService : AuthService,
+              private router : Router) { }
 
   ngOnInit() {
   }
@@ -36,6 +40,21 @@ export class RegisterComponent implements OnInit {
       this.flashMessagesService.show('비밀번호 형식이 잘못되었습니다.',{cssClass:'alert-danger', timeout:3000});
       return false;
     }
+
+
+    // Resiger User
+
+    this.authService.registerUser(user).subscribe(data => {
+      if(data.success){
+        this.flashMessagesService.show('회원가입을 축하합니다.',{cssClass:'alert-success', timeout:3000});
+        this.router.navigate(['/login']);
+      }else{
+        this.flashMessagesService.show('장애 발생',{cssClass:'alert-danger', timeout:3000});
+        this.router.navigate(['/register']);
+      }
+    });
+
+
 
   }
 
